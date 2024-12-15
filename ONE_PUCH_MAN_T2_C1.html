@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor de Video con Plyr</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.8/plyr.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .video-container {
+            width: 100%;
+            height: 100%;
+        }
+        .plyr {
+            width: 100%;
+            height: 100%;
+        }
+        .plyr video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Personalización simple para botones rojos */
+        .plyr .plyr__control {
+            color: red; /* Color de los botones */
+        }
+        .plyr .plyr__control:hover {
+            color: #ff4081; /* Color de los botones al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video id="player" controls>
+            <source src="tu-video.m3u8" type="application/x-mpegURL" />
+            <source src="https://seed177.bitchute.com/MWp0QUjJylLP/2J9cPQqHwCBj.mp4" t" type="video/mp4" />
+            Tu navegador no soporta el elemento de video.
+        </video>
+    </div>
+    <script src="https://cdn.plyr.io/3.6.8/plyr.polyfilled.js"></script>
+    <script>
+        const player = new Plyr('#player');
+    </script>
+</body>
+</html>
