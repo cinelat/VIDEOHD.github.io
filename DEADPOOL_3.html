@@ -39,7 +39,7 @@
             width: 100%;
             height: auto; /* Mantiene la proporción del video */
             max-height: 100%; /* Asegura que no se salga del contenedor */
-            object-fit: cover; /* Asegura que el video cubra el contenedor */
+            object-fit: contain; /* Mantiene la relación de aspecto del video */
         }
 
         /* Estilo del botón "Saltar anuncio" */
@@ -176,7 +176,7 @@
             countdown = adDuration / 1000; // Contador en segundos
             document.getElementById('countdown').innerText = countdown;
 
-            // Mostrar el botón "Saltar anuncio" después de 10 segundos
+            // Mostrar el botón "Saltar anuncio" después de 7 segundos
             setTimeout(() => {
                 document.getElementById('skipAd').style.display = 'block';
             }, skipAdTime);
