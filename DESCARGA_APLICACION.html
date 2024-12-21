@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pluto TV - Películas gratis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+        }
+        .header img {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin: 0;
+            font-weight: 500;
+        }
+        .info-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .rating, .downloads {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        .rating i {
+            color: gold;
+            margin-right: 5px;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            margin: 20px 0;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .loading-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+            margin-top: 10px;
+        }
+        .loading-progress {
+            height: 10px;
+            width: 0;
+            background-color: #007bff;
+            transition: width 0.3s;
+            position: relative;
+        }
+        .images {
+            display: flex;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .images img {
+            width: 100px;
+            height: 150px;
+            margin-right: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .images img:nth-child(1) { animation-delay: 0.1s; }
+        .images img:nth-child(2) { animation-delay: 0.2s; }
+        .images img:nth-child(3) { animation-delay: 0.3s; }
+        .images img:nth-child(4) { animation-delay: 0.4s; }
+        .section {
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        .section h2 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #007bff;
+        }
+        .section p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .security-icons {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .security-icons div {
+            margin-right: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .security-icons i {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        /* Estilos para la imagen a pantalla completa */
+        .fullscreen-img {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .fullscreen-img img {
+            max-width: 90%;
+            max-height: 90%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/V3w6jkC/17-sin-t-tulo-20241218221500.png" alt="Logo">
+            <h1>Flus Plus - Películas de Estreno</h1>
+        </div>
+
+        <div class="info-top">
+            <div class="rating"><i class="fas fa-star"></i>8.0</div>
+            <div class="downloads">1 M+ descargas</div>
+            <div>Más de 150 M</div>
+        </div>
+
+        <a href="#" class="button" id="downloadButton">Instalar</a>
+        <a href="#" class="button" id="cancelButton" style="background-color: #dc3545;">Cancelar</a>
+        <div class="loading-bar" id="loadingBar">
+            <div class="loading-progress" id="loadingProgress"></div>
+        </div>
+
+        <div class="images">
+            <img src="https://i.ibb.co/gdR5bGV/15-sin-t-tulo-20241218212352.png" alt="Thumbnail 1" class="thumbnail" data-full="https://i.ibb.co/gdR5bGV/15-sin-t-tulo-20241218212352.png">
+            <img src="https://i.ibb.co/S3y3P4C/15-sin-t-tulo-20241218212259.png" alt="Thumbnail 2" class="thumbnail" data-full="https://i.ibb.co/S3y3P4C/15-sin-t-tulo-20241218212259.png">
+            <img src="https://i.ibb.co/2dNw6YK/15-sin-t-tulo-20241218212252.png" alt="Thumbnail 3" class="thumbnail" data-full="https://i.ibb.co/2dNw6YK/15-sin-t-tulo-20241218212252.png">
+            <img src="https://i.ibb.co/pxXWM3F/15-sin-t-tulo-20241218212506.png" alt="Thumbnail 4" class="thumbnail" data-full="https://i.ibb.co/pxXWM3F/15-sin-t-tulo-20241218212506.png">
+        </div>
+
+        <div class="section">
+            <h2>Acerca de esta app</h2>
+            <p>Flus Plus ofrece una gran variedad de películas de más nuevo hasta lo más antiguo, así que ¿qué esperar para descargarlo?</p>
+        </div>
+
+        <div class="section">
+            <h2>Seguridad de los datos</h2>
+            <p>El primer paso de la seguridad es comprender cómo los desarrolladores recopilan y comparten tus datos...</p>
+            <div class="security-icons">
+                <div>
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Protección</p>
+                </div>
+                <div>
+                    <i class="fas fa-lock"></i>
+                    <p>Encriptación</p>
+                </div>
+                <div>
+                    <i class="fas fa-user-check"></i>
+                    <p>Privacidad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-img" id="fullscreenImg">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <img id="fullImage" src="" alt="Fullscreen Image">
+    </div>
+
+    <script>
+        let downloadInterval;
+
+        document.getElementById('downloadButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Previene la acción por defecto del enlace
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingProgress = document.getElementById('loadingProgress');
+
+            loadingBar.style.display = 'block'; // Muestra la barra de carga
+
+            // Simula una instalación
+            let width = 0;
+            downloadInterval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(downloadInterval);
+                    // Redirige a la URL de descarga directa
+                    window.location.href = 'https://www.dropbox.com/scl/fi/vf3slun5bmkqha7tp5jzp/Flus_Plus.apk?rlkey=813odjfge0deto2ype1fqy8wc&dl=1';
+                } else {
+                    width++;
+                    loadingProgress.style.width = width + '%';
+                    loadingProgress.innerText = width + '%'; // Muestra el porcentaje
+                }
+            }, 30); // Velocidad de la carga (milisegundos)
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            clearInterval(downloadInterval); // Cancela la instalación
+            document.getElementById('loadingBar').style.display = 'none'; // Oculta la barra de carga
+        });
+
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                const fullImageSrc = this.getAttribute('data-full');
+                document.getElementById('fullImage').src = fullImageSrc;
+                document.getElementById('fullscreenImg').style.display = 'flex'; // Muestra la imagen a pantalla completa
+            });
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('fullscreenImg').style.display = 'none'; // Oculta la imagen a pantalla completa
+        });
+    </script>
+
+</body>
+</html>
