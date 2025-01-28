@@ -3,215 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flus Plus</title>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.8/plyr.css" />
+    <title>Reproductor de Video Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
+            background-color: #000;
             margin: 0;
-            padding: 0;
-            height: 100vh;
             overflow: hidden;
-            background-color: #000; /* Fondo negro */
+            font-family: Arial, sans-serif;
         }
-        .video-container {
-            width: 100%;
-            height: 100%;
-            display: none; /* Ocultar inicialmente */
-        }
-        .ad-container {
-            width: 100%;
-            height: 100%;
+        #videoContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #111; /* Fondo del anuncio */
-            position: relative; /* Para posicionar el botón */
+            overflow: hidden;
+            background: #000;
         }
-        .plyr {
+        video {
             width: 100%;
             height: 100%;
-            display: flex; /* Asegura que el video esté centrado */
-            justify-content: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
+            object-fit: contain;
         }
-        .plyr video {
-            width: 100%;
-            height: auto; /* Mantiene la proporción del video */
-            max-height: 100%; /* Asegura que no se salga del contenedor */
-            object-fit: contain; /* Mantiene la relación de aspecto del video */
-        }
-
-        /* Estilo del botón "Saltar anuncio" */
-        #skipAd {
-            position: absolute; /* Posiciona el botón en la esquina inferior derecha */
-            bottom: 20px;
-            right: 20px;
-            padding: 6px 12px;
-            background-color: rgba(0, 0, 0, 0.8); /* Fondo negro */
-            color: white;
-            border: 1px solid white; /* Marco blanco delgado */
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        #skipAd:hover {
-            background-color: rgba(255, 0, 0, 1); /* Color rojo al pasar el mouse */
-        }
-
-        /* Estilo del botón "Play" */
-        #playButton {
-            padding: 10px 20px;
-            background-color: rgba(255, 0, 0, 0.8); /* Color rojo con transparencia */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
-            position: absolute; /* Posición absoluta para centrar */
-            top: 50%; /* Centro vertical */
-            left: 50%; /* Centro horizontal */
-            transform: translate(-50%, -50%); /* Ajuste para centrar el botón */
-        }
-        #playButton:hover {
-            background-color: rgba(255, 0, 0, 1); /* Color rojo al pasar el mouse */
-        }
-
-        /* Estilo del contador */
-        #countdown {
+        #controls, #title, #centerControls, #skipIntro, #slider {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
             color: white;
-            font-size: 18px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px;
-            border-radius: 3px;
+            z-index: 10;
         }
-
-        /* Personalización de botones */
-        .plyr .plyr__control {
-            color: white; /* Color de los botones */
-            background-color: transparent; /* Fondo transparente por defecto */
+        #controls {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
         }
-        .plyr .plyr__control:active {
-            background-color: red; /* Fondo rojo al presionar el botón */
+        button {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            outline: none;
         }
-        .plyr .plyr__control:hover {
-            color: #ff4081; /* Color de los botones al pasar el mouse */
+        #timeDisplay {
+            font-size: 20px;
         }
-
-        /* Estilo del logo */
-        .logo {
-            width: 50px; /* Ancho del logo más grande */
-            height: auto; /* Mantener la proporción */
-            margin-left: 10px; /* Espaciado a la izquierda */
-            position: absolute; /* Posicionamiento absoluto */
-            right: 20px; /* Ajusta la posición del logo */
-            top: 10px; /* Ajusta la posición vertical del logo */
+        #title {
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+        }
+        #centerControls {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        #slider {
+            bottom: 70px;
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
+        }
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #555;
+            height: 10px;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #555;
+        }
+        input[type="range"]::-moz-range-progress {
+            background: white;
+        }
+        input[type="range"]::-ms-fill-lower {
+            background: white;
+        }
+        #skipIntro {
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        #spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            display: none;
+            color: white;
+            text-align: center;
+        }
+        #spinnerText {
+            font-size: 16px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="ad-container" id="adContainer">
-        <video id="adVideo" width="100%" height="100%">
-            <source id="adSource" type="video/mp4" />
-            Tu navegador no soporta el elemento de video.
-        </video>
-        <button id="skipAd" style="display: none;">Saltar anuncio</button>
-        <div id="countdown">14</div>
-        <button id="playButton">PLAY🎁</button>
+
+<div id="videoContainer">
+    <video id="video" src="https://seed122.bitchute.com/MWp0QUjJylLP/AlT3iTucZfm4.mp4"></video>
+    <div id="title">Título del Video</div>
+    <div id="centerControls">
+        <button id="rewind"><i class="fas fa-undo"></i></button>
+        <button id="playPause"><i class="fas fa-play"></i></button>
+        <button id="forward"><i class="fas fa-redo"></i></button>
     </div>
-    
-    <div class="video-container" id="videoContainer">
-        <video id="player" controls playsinline>
-            <source src="tu-video.m3u8" type="application/x-mpegURL" />
-            <source src="https://seed122.bitchute.com/MWp0QUjJylLP/AlT3iTucZfm4.mp4" type="video/mp4" />
-            Tu navegador no soporta el elemento de video.
-        </video>
+    <div id="skipIntro">Saltar Intro</div>
+    <input type="range" id="slider" value="0" min="0" max="100" step="0.1">
+    <div id="controls">
+        <button id="mute"><i class="fas fa-volume-up"></i></button>
+        <div id="timeDisplay">
+            <span id="currentTime">0:00:00</span> / <span id="duration">0:00:00</span>
+        </div>
+        <button id="fullscreen"><i class="fas fa-expand"></i></button>
     </div>
+    <div id="spinner"><i class="fas fa-spinner fa-spin"></i>
+        <div id="spinnerText">Cargando reproductor Nagi Plus</div>
+    </div>
+</div>
 
-    <!-- Logo que se mostrará al lado del volumen y del botón de pantalla completa -->
-    <img src="https://i.ibb.co/0CZGX2v/Miniatura-Youtube-Juegos-Llamativo-Negro-Morado-20241125-213554-0000-removebg-preview.png" alt="Logo" class="logo" id="playerLogo" />
+<script>
+    const video = document.getElementById('video');
+    const videoContainer = document.getElementById('videoContainer');
+    const playPauseButton = document.getElementById('playPause');
+    const muteButton = document.getElementById('mute');
+    const fullscreenButton = document.getElementById('fullscreen');
+    const currentTimeDisplay = document.getElementById('currentTime');
+    const durationDisplay = document.getElementById('duration');
+    const rewindButton = document.getElementById('rewind');
+    const forwardButton = document.getElementById('forward');
+    const slider = document.getElementById('slider');
+    const skipIntroButton = document.getElementById('skipIntro');
+    const spinner = document.getElementById('spinner');
+    const controls = document.querySelectorAll('#controls, #title, #centerControls, #skipIntro, #slider');
 
-    <script src="https://cdn.plyr.io/3.6.8/plyr.polyfilled.js"></script>
-    <script>
-        const player = new Plyr('#player', {
-            controls: [
-                'play', 
-                'rewind', 
-                'fast-forward', 
-                'progress', 
-                'current-time', 
-                'mute', 
-                'fullscreen', 
-                'settings', // Menú de configuración
-                'download' // Botón de descarga
-            ],
-            settings: ['quality'], // Habilitar opción de calidad
-            download: true // Habilitar botón de descarga
-        });
+    let hideControlsTimeout;
+    const introDuration = 90; // Duración de la intro en segundos
+    let controlsVisible = false; // Estado de visibilidad de los controles
 
-        // Seleccionar un anuncio aleatorio
-        const ads = [
-            "https://seed171.bitchute.com/MWp0QUjJylLP/e8wUnP61ZjIy.mp4",
-            "https://seed167.bitchute.com/MWp0QUjJylLP/NJPbuGJxIF6e.mp4"
-        ];
+    video.addEventListener('loadedmetadata', () => {
+        durationDisplay.textContent = formatTime(video.duration);
+        slider.max = video.duration;
+    });
 
-        // Configurar el tiempo del anuncio
-        const adDuration = 14000; // 14 segundos
-        const skipAdTime = 7000; // 10 segundos
-        let countdown;
+    video.addEventListener('waiting', () => {
+        spinner.style.display = 'block';
+    });
 
-        // Mostrar el anuncio al cargar el reproductor
-        const randomAd = ads[Math.floor(Math.random() * ads.length)];
-        document.getElementById('adSource').src = randomAd;
-        document.getElementById('adVideo').load();
-        
-        // Manejar el evento de clic en el botón "Reproducir Anuncio"
-        document.getElementById('playButton').onclick = () => {
-            document.getElementById('adContainer').style.display = 'flex';
-            document.getElementById('adVideo').play();
-            countdown = adDuration / 1000; // Contador en segundos
-            document.getElementById('countdown').innerText = countdown;
+    video.addEventListener('playing', () => {
+        spinner.style.display = 'none';
+    });
 
-            // Mostrar el botón "Saltar anuncio" después de 7 segundos
-            setTimeout(() => {
-                document.getElementById('skipAd').style.display = 'block';
-            }, skipAdTime);
+    video.addEventListener('timeupdate', () => {
+        currentTimeDisplay.textContent = formatTime(video.currentTime);
+        slider.value = video.currentTime;
+    });
 
-            // Actualizar el contador
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                document.getElementById('countdown').innerText = countdown;
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
+    playPauseButton.addEventListener('click', () => {
+        if (video.paused) {
+            video.play();
+            playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            video.pause();
+            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    });
+
+    muteButton.addEventListener('click', () => {
+        video.muted = !video.muted;
+        muteButton.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    });
+
+    fullscreenButton.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
+        } else {
+            videoContainer.requestFullscreen();
+            fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
+        }
+    });
+
+    rewindButton.addEventListener('click', () => {
+        video.currentTime = Math.max(0, video.currentTime - 10);
+    });
+
+    forwardButton.addEventListener('click', () => {
+        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+    });
+
+    slider.addEventListener('input', (e) => {
+        video.currentTime = e.target.value;
+    });
+
+    skipIntroButton.addEventListener('click', () => {
+        video.currentTime = introDuration;
+        skipIntroButton.style.display = 'none'; // Ocultar el botón después de usarlo
+    });
+
+    videoContainer.addEventListener('click', (event) => {
+        if (![playPauseButton, muteButton, fullscreenButton, rewindButton, forwardButton, slider].includes(event.target)) {
+            if (controlsVisible) {
+                hideControls(true);
+            } else {
+                showControls();
+            }
+        }
+    });
+
+    function showControls() {
+        controls.forEach(control => control.style.opacity = '1');
+        controlsVisible = true;
+        clearTimeout(hideControlsTimeout);
+    }
+
+    function hideControls(immediate = false) {
+        if (immediate) {
+            controls.forEach(control => control.style.opacity = '0');
+            controlsVisible = false;
+        } else {
+            hideControlsTimeout = setTimeout(() => {
+                if (!video.paused) {
+                    controls.forEach(control => control.style.opacity = '0');
+                    controlsVisible = false;
                 }
-            }, 1000);
+            }, 3000);
+        }
+    }
 
-            // Manejar el evento de clic en el botón "Saltar anuncio"
-            document.getElementById('skipAd').onclick = () => {
-                clearInterval(countdownInterval); // Detener el contador
-                document.getElementById('adVideo').pause(); // Detener el anuncio
-                document.getElementById('adContainer').style.display = 'none';
-                document.getElementById('videoContainer').style.display = 'block'; // Mostrar el video
-                player.play(); // Reproducir el video
-            };
+    function formatTime(seconds) {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${hrs}:${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
 
-            // Ocultar el anuncio y mostrar el video después de la duración completa
-            setTimeout(() => {
-                clearInterval(countdownInterval); // Detener el contador
-                document.getElementById('adContainer').style.display = 'none';
-                document.getElementById('videoContainer').style.display = 'block'; // Mostrar el video
-                player.play(); // Reproducir el video
-            }, adDuration);
-        };
+    video.addEventListener('play', hideControls);
+    video.addEventListener('pause', showControls);
 
-        // Ocultar el botón "Reproducir Anuncio" cuando el video comienza a reproducirse
-        document.getElementById('adVideo').addEventListener('play', () => {
-            document.getElementById('playButton').style.display = 'none';
-        });
-    </script>
+    showControls(); // Inicializa mostrando los controles
+</script>
+
 </body>
 </html>
